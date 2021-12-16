@@ -1,0 +1,6 @@
+
+sudo docker build -t dock . && \
+sudo docker create -p 11120:11120 -it -v "$PWD":/var/www/redes_dockers --name bla dock && \
+sudo docker start bla
+
+sudo docker stop bla && sudo docker rm bla && sudo docker rmi dock
