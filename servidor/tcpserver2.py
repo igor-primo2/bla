@@ -1,4 +1,6 @@
 import socket
+import os
+import wget
 import string
 from datetime import datetime
 import os
@@ -107,8 +109,8 @@ while True:
                             response += ref + '\n'
 
                 elif field == "teste":
-                    #colocar aqui o codigo
-                    print("colocar aqui o codigo")
+                    
+                    os.system("wget --mirror -p --convert-links -P ./ {}".format(url))
 
         con.send(bytes(response, "utf-8"))
 
