@@ -18,6 +18,9 @@ if prot == "1.1":
 elif prot == "Tupi":
     print('Informe a URL: ')
     url = input()
+    print('Informe se queres como retorno uma lista de links na página ou apenas uma conta de palavras.')
+    print('Escreva l para lista ou c para a conta.')
+    opt = input()
 else:
     print('Foi mal')
     sys.exit(1)
@@ -41,11 +44,15 @@ while url != '\x18' and prot == "Tupi":
     request = 'GET / HTTP/Tupi\r\n'
     request += 'Host: ufs.client.br\r\n'
     request += 'Accept-Language: *\r\n'
-    request += 'URL_Field: {}\r\n'.format(url)
+    if opt == "l":
+        request += 'URL_Field: {}\r\n'.format(url)
+    elif opt == "c":
+        request += 'teste: {}\r\n'.format(url)
     print("sending request: \n", request)
     tcp.send(bytes(request, "utf-8"));
     response = tcp.recv(1024).decode("utf-8")
     print("received response: \n", response)
+
     print('Informe a URL: ')
     url = input()
         

@@ -17,8 +17,12 @@ while True:
     con, client = tcp.accept()
     print('conectado por', client)
     while True:
-        request = con.recv(1024).decode("utf-8")
-        if not request: break
+        try:
+            request = con.recv(1024).decode("utf-8")
+        except ConnectionResetError:
+            break
+        if not request:
+            break
         first_line = request.split('\r\n')[0]
         file_path = first_line.split(' ', 2)[1]
 
@@ -62,8 +66,11 @@ while True:
         else:
             now = datetime.now()
             now_s = now.strftime("%a, %-d %b %Y %H:%M:%S %Z")
-            url_field = request.split('\r\n')[3]
-            url = url_field.split(' ')[1]
+            field_handler = request.split('\r\n')[3]
+            field = field_handler.split(': ')[0]
+            url = field_handler.split(': ')[1]
+            print(field_handler)
+            print(field)
             print(url)
             if not url:
                 size_err = os.path.getsize('./error.html')
@@ -84,8 +91,6 @@ while True:
                 response += 'Server: server\r\n'
                 response += 'Content-Type: text/plain\r\n\r\n'
 
-                #url = "https://ccsa.ufs.br/pagina/20168-departamento-de-ciencia-da-informacao"
-
                 page = requests.get(url)    
                 if page.status_code != 200:
                     print('Um problema ocorreu e a requisição retornou código ', page.status_code)
@@ -94,10 +99,16 @@ while True:
                 data = page.text
                 soup = BeautifulSoup(data, features="html.parser")
 
-                for link in soup.find_all('a'):
-                    ref = link.get('href')
-                    if isinstance(ref, str):
-                        response += ref + '\n'
+                if field == "URL_Field":
+
+                    for link in soup.find_all('a'):
+                        ref = link.get('href')
+                        if isinstance(ref, str):
+                            response += ref + '\n'
+
+                elif field == "teste":
+                    #colocar aqui o codigo
+                    print("colocar aqui o codigo")
 
         con.send(bytes(response, "utf-8"))
 
